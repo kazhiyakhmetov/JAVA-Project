@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Категории</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            width: 300px;
+            margin: 30px auto;
+        }
+        li {
+            background-color: #4CAF50;
+            margin: 5px 0;
+            padding: 12px;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        li:hover {
+            background-color: #45a049;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Категории</h1>
+<ul>
+    <li th:each="category : ${categories}" th:text="${category.name}"></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание задачи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, textarea, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1558b0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Создание задачи</h1>
+    <form action="/task" method="post">
+        <div class="form-group">
+            <label for="title">Название задачи:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Описание:</label>
+            <textarea id="description" name="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="dueDate">Срок выполнения:</label>
+            <input type="date" id="dueDate" name="dueDate">
+        </div>
+        <div class="form-group">
+            <label for="status">Статус:</label>
+            <select id="status" name="status">
+                <option value="PENDING">В ожидании</option>
+                <option value="IN_PROGRESS">В процессе</option>
+                <option value="COMPLETED">Завершено</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="priority">Приоритет:</label>
+            <select id="priority" name="priority">
+                <option value="LOW">Низкий</option>
+                <option value="MEDIUM" selected>Средний</option>
+                <option value="HIGH">Высокий</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="categoryId">Категория:</label>
+            <select id="categoryId" name="categoryId" required>
+                <!-- Thymeleaf: подставьте категории -->
+                <th:block th:each="category : ${categories}">
+                    <option th:value="${category.id}" th:text="${category.name}"></option>
+                </th:block>
+            </select>
+        </div>
+        <button type="submit">Создать задачу</button>
+    </form>
+</div>
+</body>
+</html>

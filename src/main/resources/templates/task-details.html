@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Детали задачи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .details {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #dcdcdc;
+            border-radius: 5px;
+            background: #f8f8f8;
+        }
+        .details p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .details strong {
+            color: #34495e;
+        }
+        a {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            color: #3498db;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .back-btn {
+            display: block;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #2980b9;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .back-btn:hover {
+            background-color: #1c5986;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Детали задачи</h1>
+    <div class="details">
+        <p><strong>Название:</strong> <span th:text="${task.title}"></span></p>
+        <p><strong>Описание:</strong> <span th:text="${task.description}"></span></p>
+        <p><strong>Категория:</strong> <span th:text="${task.category.name}"></span></p>
+        <p><strong>Дедлайн:</strong> <span th:text="${task.dueDate}"></span></p>
+        <p><strong>Приоритет:</strong> <span th:text="${task.priority}"></span></p>
+        <p><strong>Статус:</strong> <span th:text="${task.status}"></span></p>
+    </div>
+    <a th:href="@{/home}" class="back-btn">Вернуться на главную</a>
+</div>
+
+</body>
+</html>
+
