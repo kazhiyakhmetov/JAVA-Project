@@ -1,9 +1,11 @@
 package com.example.hardlab5.model;
 
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Entity
 @Table(name = "users")
@@ -12,15 +14,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String username;
-
     private String password;
-
-    @Column(unique = true)
     private String email;
-
-    private String avatarPath;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -28,6 +24,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
+    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }
@@ -75,13 +72,4 @@ public class User {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
-
-    public String getAvatarPath() {
-        return avatarPath;
-    }
-
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
-    }
-
 }

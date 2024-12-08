@@ -30,9 +30,11 @@ public class Task {
     }
 
     @Enumerated(EnumType.STRING)
-    private Status status; // Поле для статуса задачи
+    private Status status;
 
-    // Поле приоритета задачи
+
+
+
     public enum Priority {
         LOW,
         MEDIUM,

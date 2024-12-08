@@ -1,145 +1,14 @@
-//package com.example.hardlab5.controller;
-//
-//
-//import com.example.hardlab5.model.User;
-//import com.example.hardlab5.model.Category;
-//import com.example.hardlab5.model.Task;
-//import com.example.hardlab5.next.CategoryService;
-//import com.example.hardlab5.next.TaskService;
-//import com.example.hardlab5.next.UserService;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpSession;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.core.annotation.AuthenticationPrincipal;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.*;
-//
-//
-//
-//import java.util.List;
-//
-//@Controller
-//public class MainController {
-//
-//    @Autowired
-//    private UserService userService;
-//
-//    @Autowired
-//    private TaskService taskService;
-//
-//    @Autowired
-//    private CategoryService categoryService;
-//
-//    @GetMapping("/auth/register")
-//    public String showRegisterForm(Model model) {
-//        model.addAttribute("user", new User());
-//        return "register";
-//    }
-//
-//    @PostMapping("/auth/register")
-//    public String registerUser(@ModelAttribute("user") User user) {
-//        userService.saveUser(user);
-//        return "redirect:/auth/login";
-//    }
-//
-//
-//    @GetMapping("/auth/login")
-//    public String showLoginForm(HttpServletRequest request) {
-//        HttpSession session = request.getSession(false);
-//        if (session != null) {
-//            System.out.println("Session ID: " + session.getId());
-//        }
-//        return "login";
-//    }
-
-
-
-//    @GetMapping("/home")
-//    public String home(@AuthenticationPrincipal org.springframework.security.core.userdetails.User currentUser, Model model) {
-//        if (currentUser == null) {
-//            return "redirect:/auth/login";
-//        }
-//        model.addAttribute("currentUser", currentUser);
-//        Long userId = userService.findByUsername(currentUser.getUsername()).getId();
-//        List<Task> tasks = taskService.findTasksByUser(userId);
-//        model.addAttribute("tasks", tasks);
-//        return "home";
-//    }
-
-
-//
-//    @GetMapping("/home")
-//    public String home(@AuthenticationPrincipal org.springframework.security.core.userdetails.User currentUser, Model model) {
-//        if (currentUser == null) {
-//            return "redirect:/auth/login";
-//        }
-//
-//        String username = currentUser.getUsername();
-//        System.out.println("Attempting to find user with username: " + username);
-//
-//        User user = userService.findByUsername(username);
-//
-//        if (user == null) {
-//            System.out.println("User not found with username: " + username);
-//            return "redirect:/auth/login";  // если пользователь не найден, перенаправляем на страницу логина
-//        }
-//
-//        model.addAttribute("currentUser", user);
-//        Long userId = user.getId();
-//        List<Task> tasks = taskService.findTasksByUser(userId);
-//        model.addAttribute("tasks", tasks);
-//        return "home";
-//    }
-//
-//
-//
-//
-//
-//
-//    @GetMapping("/categories")
-//    public String categories(Model model) {
-//        List<Category> categories = categoryService.getAllCategories();
-//        model.addAttribute("categories", categories);
-//        return "categories";
-//    }
-//
-//    @GetMapping("/tasks/{categoryId}")
-//    public String tasks(@PathVariable Long categoryId, Model model) {
-//        List<Task> tasks = taskService.findTasksByCategory(categoryId);
-//        model.addAttribute("tasks", tasks);
-//        return "tasks";
-//    }
-//
-//    @GetMapping("/task/new")
-//    public String newTask(Model model) {
-//        model.addAttribute("task", new Task());
-//        model.addAttribute("categories", categoryService.getAllCategories());
-//        return "new-task";
-//    }
-//
-//    @PostMapping("/task")
-//    public String addTask(@ModelAttribute Task task, @AuthenticationPrincipal User currentUser) {
-//        task.setUser(userService.findByUsername(currentUser.getUsername()));
-//        taskService.addTask(task);
-//        return "redirect:/home";
-//    }
-//}
-
 package com.example.hardlab5.controller;
 
-import ch.qos.logback.core.encoder.Encoder;
 import com.example.hardlab5.model.User;
 import com.example.hardlab5.model.Category;
 import com.example.hardlab5.model.Task;
 import com.example.hardlab5.next.CategoryService;
+import com.example.hardlab5.next.EmailService;
 import com.example.hardlab5.next.TaskService;
 import com.example.hardlab5.next.UserService;
 import com.example.hardlab5.repo.TaskRepository;
 import com.example.hardlab5.repo.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.hibernate.engine.spi.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -150,10 +19,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -177,7 +49,7 @@ public class MainController {
     public String showRegisterForm(Model model, @RequestParam(value = "error", required = false) String error) {
         model.addAttribute("user", new User());
         if (error != null) {
-            model.addAttribute("errorMessage", "Email уже используется. Попробуйте другой.");
+            model.addAttribute("errorMessage", "Email уже есть ");
         }
         return "register";
     }
@@ -192,42 +64,18 @@ public class MainController {
     }
 
 
-
     @GetMapping("/auth/login")
     public String showLoginForm() {
         return "login";
     }
 
-//    @GetMapping("/home")
-//    public String home(@AuthenticationPrincipal UserDetails currentUser, Model model) {
-//        if (currentUser == null) {
-//            return "redirect:/auth/login";
-//        }
-//
-//        String username = currentUser.getUsername();
-//        User user = userService.findByUsername(username);
-//
-//        if (user == null) {
-//            return "redirect:/auth/login";
-//        }
-//
-//        model.addAttribute("currentUser", user);
-//        try {
-//            List<Task> tasks = taskService.findTasksByUser(user.getId());
-//            model.addAttribute("tasks", tasks);
-//        } catch (Exception e) {
-//            System.err.println("Ошибка при чтении задач: " + e.getMessage());
-//            model.addAttribute("errorMessage", "Не удалось загрузить задачи. Обратитесь к администратору.");
-//            return "error-page";
-//        }
-//        return "home";
-//    }
 
 
     @GetMapping("/home")
     public String home(@AuthenticationPrincipal UserDetails currentUser,
                        @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "query", required = false) String query,
+                       @RequestParam(value = "category", required = false) String category,
                        Model model) {
         if (currentUser == null) {
             return "redirect:/auth/login";
@@ -247,8 +95,12 @@ public class MainController {
 
             Page<Task> tasksPage;
 
-            if (query != null && !query.isEmpty()) {
+            if ((query != null && !query.isEmpty()) && (category != null && !category.isEmpty())) {
+                tasksPage = taskService.findTasksByUserAndTitleAndCategory(user.getId(), query, category, pageRequest);
+            } else if (query != null && !query.isEmpty()) {
                 tasksPage = taskService.findTasksByUserAndTitleContaining(user.getId(), query, pageRequest);
+            } else if (category != null && !category.isEmpty()) {
+                tasksPage = taskService.findTasksByUserAndCategory(user.getId(), category, pageRequest);
             } else {
                 tasksPage = taskService.findTasksByUser(user.getId(), pageRequest);
             }
@@ -257,9 +109,14 @@ public class MainController {
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", tasksPage.getTotalPages());
             model.addAttribute("query", query);
+            model.addAttribute("category", category);
+
+            List<Category> categories = categoryService.findAll();
+            model.addAttribute("categories", categories);
+
         } catch (Exception e) {
-            System.err.println("Ошибка при чтении задач: " + e.getMessage());
-            model.addAttribute("errorMessage", "Не удалось загрузить задачи. Обратитесь к администратору.");
+            System.err.println("Ошибка " + e.getMessage());
+            model.addAttribute("errorMessage", "ошибка ");
             return "error-page";
         }
 
@@ -267,9 +124,24 @@ public class MainController {
     }
 
 
+    @Autowired
+    private EmailService emailService;
 
 
-
+    @PostMapping("/home/send-email")
+    public String sendEmail(
+            @RequestParam("email") String email,
+            @RequestParam("name") String name,
+            @RequestParam("message") String message,
+            Model model) {
+        try {
+            emailService.sendEmail(email, name, message);
+            model.addAttribute("successMessage", "Письмо отправлено");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Ошибка при отправке письма " + e.getMessage());
+        }
+        return "redirect:/home";
+    }
 
 
     @Autowired
@@ -289,19 +161,63 @@ public class MainController {
     }
 
 
+
+
+    private final String uploadDirectory = "C:/Users/home/IdeaProjects/hardlab5/src/main/resources/images/";
+
+
     @GetMapping("/profile")
     public String viewProfile(Authentication authentication, Model model) {
-
         String username = authentication.getName();
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new RuntimeException("Юзер не найден");
         }
         model.addAttribute("user", user);
         return "profile";
     }
 
 
+    @PostMapping("/profile/upload-avatar")
+    public String uploadAvatar(@RequestParam("avatar") MultipartFile file, @AuthenticationPrincipal UserDetails currentUser) {
+        if (file.isEmpty()) {
+            return "redirect:/profile?error=empty_file";
+        }
+
+        User user = userService.findByUsername(currentUser.getUsername());
+
+        if (user != null) {
+            try {
+                String filename = user.getUsername() + "_" + file.getOriginalFilename();
+                Path filePath = Paths.get(uploadDirectory + filename);
+                Files.createDirectories(filePath.getParent());
+                Files.write(filePath, file.getBytes());
+
+                user.setAvatarPath("/images/" + filename);
+                String currentPassword = user.getPassword();
+                user.setPassword(currentPassword);
+
+                userService.saveUser(user);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "redirect:/profile?error=upload_failed";
+            }
+        }
+
+        return "redirect:/profile";
+    }
+
+
+    @PostMapping("/profile/delete-avatar")
+    public String deleteAvatar(@AuthenticationPrincipal UserDetails currentUser) {
+        User user = userService.findByUsername(currentUser.getUsername());
+        if (user != null) {
+            user.setAvatarPath(null);
+            userService.saveUser(user);
+        }
+        return "redirect:/profile";
+    }
 
     @GetMapping("/categories")
     public String categories(Model model) {

@@ -71,11 +71,10 @@
         <input type="password" id="password" name="password" placeholder="Введите ваш пароль" required>
         <button type="submit">Войти</button>
     </form>
-    <!-- Сообщение об ошибке (если вход не удался) -->
     <div class="error">
-        <!-- Spring автоматически добавляет параметр error в URL при неудачной попытке входа -->
         <p th:if="${param.error}" th:text="'Неверный email или пароль.'"></p>
     </div>
 </div>
+
 </body>
 </html>

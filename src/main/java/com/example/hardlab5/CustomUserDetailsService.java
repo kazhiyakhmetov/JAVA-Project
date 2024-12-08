@@ -56,33 +56,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @Override
-//    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-//        // Логирование для диагностики
-//        System.out.println("Looking for user with username or email: " + usernameOrEmail);
-//
-//        // Пытаемся найти пользователя по username или email
-//        User user = userRepository.findByUsername(usernameOrEmail);
-//        if (user == null) {
-//            System.out.println("User not found by username, checking by email...");
-//            user = userRepository.findByEmail(usernameOrEmail);
-//        }
-//
-//        if (user == null) {
-//            throw new UsernameNotFoundException("User not found with username or email: " + usernameOrEmail);
-//        }
-//
-//        // Логирование найденного пользователя
-//        System.out.println("User found: " + user.getUsername());
-//
-//        // Возвращаем пользователя с хэшированным паролем
-//        return org.springframework.security.core.userdetails.User.builder()
-//                .username(user.getUsername())
-//                .password(user.getPassword()) // хэшированный пароль
-//                .roles("USER")
-//                .build();
-//    }
-//}
+
 
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         System.out.println("Looking for user with username or email: " + usernameOrEmail);
@@ -105,3 +79,4 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .build();
     }
 }
+

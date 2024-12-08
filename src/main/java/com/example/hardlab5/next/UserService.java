@@ -98,12 +98,15 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Сохранить пользователя (регистрация)
-    public User saveUser(User user) {
-        // Хэшируем пароль перед сохранением
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public void saveUser(User user) {
+        // Проверяем, если пароль уже зашифрован, не перезаписываем его
+        if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) { // например, проверка для BCrypt
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        userRepository.save(user);
     }
+
+
 
 
     // Найти пользователя по имени

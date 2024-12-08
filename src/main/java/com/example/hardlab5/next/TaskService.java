@@ -51,13 +51,27 @@ public class TaskService {
     }
 
     public void addTask(Task task) {
-        taskRepository.save(task); // Сохраняет задачу в базу данных
+        taskRepository.save(task);
     }
 
 
     public Page<Task> findTasksByUser(Long userId, PageRequest pageRequest) {
         return taskRepository.findByUserId(userId, pageRequest);
     }
+
+    public Page<Task> findByUserAndCategory(Long userId, String category, String query, int page) {
+        Pageable pageable = PageRequest.of(page, 3);
+        return taskRepository.findByUserAndCategory(userId, category, query, pageable);
+    }
+
+    public Page<Task> findTasksByUserAndTitleAndCategory(Long userId, String title, String category, Pageable pageable) {
+        return taskRepository.findByUserIdAndTitleContainingAndCategoryName(userId, title, category, pageable);
+    }
+
+    public Page<Task> findTasksByUserAndCategory(Long userId, String category, Pageable pageable) {
+        return taskRepository.findByUserIdAndCategoryName(userId, category, pageable);
+    }
+
 
     public Page<Task> findTasksByUserAndTitleContaining(Long userId, String query, Pageable pageable) {
         return taskRepository.findByUserIdAndTitleContaining(userId, query, pageable);

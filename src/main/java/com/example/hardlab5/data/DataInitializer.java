@@ -14,7 +14,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Добавляем категории, если они еще не существуют
         if (categoryRepository.count() == 0) {
             Category category1 = new Category();
             category1.setName("Home Work");

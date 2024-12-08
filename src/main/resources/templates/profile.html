@@ -1,3 +1,98 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Профиль</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;-->
+<!--            background-color: #eef2f5;-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--        }-->
+
+<!--        .container {-->
+<!--            max-width: 500px;-->
+<!--            margin: 60px auto;-->
+<!--            background: #ffffff;-->
+<!--            padding: 30px;-->
+<!--            border-radius: 8px;-->
+<!--            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        h1 {-->
+<!--            font-size: 2em;-->
+<!--            color: #333;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        .profile-info {-->
+<!--            margin-bottom: 30px;-->
+<!--        }-->
+
+<!--        .profile-info p {-->
+<!--            font-size: 16px;-->
+<!--            line-height: 1.6;-->
+<!--            color: #555;-->
+<!--            margin: 10px 0;-->
+<!--        }-->
+
+<!--        .profile-info strong {-->
+<!--            font-weight: bold;-->
+<!--            color: #444;-->
+<!--        }-->
+
+<!--        a {-->
+<!--            display: inline-block;-->
+<!--            text-decoration: none;-->
+<!--            padding: 12px 20px;-->
+<!--            background-color: #1a73e8 ;-->
+<!--            color: white;-->
+<!--            border-radius: 5px;-->
+<!--            font-size: 16px;-->
+<!--            font-weight: bold;-->
+<!--            transition: background-color 0.3s ease, transform 0.2s ease;-->
+<!--        }-->
+
+<!--        a:hover {-->
+<!--            background-color: #1a73e8 ;-->
+<!--            transform: scale(1.05);-->
+<!--        }-->
+
+<!--        .logout-button {-->
+<!--            background-color: #f44336;-->
+<!--        }-->
+
+<!--        .logout-button:hover {-->
+<!--            background-color: #d32f2f;-->
+<!--            transform: scale(1.05);-->
+<!--        }-->
+
+<!--        .button-group {-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            margin-top: 30px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <h1>Профиль пользователя</h1>-->
+<!--    <div class="profile-info">-->
+<!--        <p><strong>Имя пользователя:</strong> <span th:text="${user.username}"></span></p>-->
+<!--        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>-->
+<!--    </div>-->
+<!--    <div class="button-group">-->
+<!--        <a href="/home">На главную</a>-->
+<!--        <a href="/auth/login" class="logout-button">Выйти</a>-->
+<!--    </div>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -33,8 +128,8 @@
         }
 
         .profile-info p {
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 18px;
+            line-height: 1.8;
             color: #555;
             margin: 10px 0;
         }
@@ -44,20 +139,49 @@
             color: #444;
         }
 
-        a {
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+        }
+
+        a, button {
             display: inline-block;
             text-decoration: none;
             padding: 12px 20px;
-            background-color: #1a73e8 ;
+            background-color: #1a73e8;
             color: white;
             border-radius: 5px;
             font-size: 16px;
             font-weight: bold;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            cursor: pointer;
         }
 
-        a:hover {
-            background-color: #1a73e8 ;
+        a:hover, button:hover {
+            background-color: #005cbf;
+            transform: scale(1.05);
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"]:hover {
+            background-color: #005cbf;
             transform: scale(1.05);
         }
 
@@ -75,15 +199,52 @@
             justify-content: space-between;
             margin-top: 30px;
         }
+
+        .upload-form {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .delete-avatar {
+            background-color: #f44336;
+            margin-top: 10px;
+        }
+
+        .delete-avatar:hover {
+            background-color: #d32f2f;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Профиль пользователя</h1>
     <div class="profile-info">
+        <!-- Отображаем аватар пользователя -->
+        <div>
+            <img th:src="${user.avatarPath != null ? user.avatarPath : '/images/default-avatar.png'}" alt="Аватар пользователя" class="avatar">
+        </div>
         <p><strong>Имя пользователя:</strong> <span th:text="${user.username}"></span></p>
         <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
     </div>
+
+    <!-- Форма для загрузки аватара -->
+    <div class="upload-form">
+        <form th:action="@{/profile/upload-avatar}" method="post" enctype="multipart/form-data">
+            <input type="file" name="avatar" accept="image/*">
+            <button type="submit" style="background-color: #1a73e8;">Загрузить аватар</button>
+        </form>
+    </div>
+
+    <!-- Кнопка для удаления аватара -->
+    <div class="upload-form">
+        <form th:action="@{/profile/delete-avatar}" method="post">
+            <button type="submit" class="delete-avatar">Удалить аватар</button>
+        </form>
+    </div>
+
     <div class="button-group">
         <a href="/home">На главную</a>
         <a href="/auth/login" class="logout-button">Выйти</a>
@@ -91,3 +252,4 @@
 </div>
 </body>
 </html>
+

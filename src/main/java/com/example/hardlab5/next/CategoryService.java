@@ -51,6 +51,10 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
     public Category getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId).orElse(null);
     }
@@ -77,6 +81,7 @@ public class CategoryService {
         }
         return null;
     }
+
 }
 
 
